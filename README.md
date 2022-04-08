@@ -1,1 +1,1 @@
-# 3Digit - Showcase
+# 3digit-showcase

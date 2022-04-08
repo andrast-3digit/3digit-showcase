@@ -45,7 +45,7 @@ const {div: Carousel, button: Arrow, img: TargetImage, button:Target} = XElement
 				}
 			}
 			store.checkLoading();
-			store.instigators = [...document.querySelectorAll('.arrow')];
+			store.instigators = [...this.querySelectorAll('button')];
 			store.frameMap = {
 				1: {'forward': 17, 'backwards': 50},
 				17: {'forward': 38, 'backwards': 1},

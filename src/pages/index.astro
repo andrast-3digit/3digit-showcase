@@ -1,13 +1,147 @@
 ---
-
+import XElement from 'astro-xelement';
+const {div: Carousel, button: Arrow, img: TargetImage, button:Target} = XElement;
 ---
 <html lang="en">
 	<head>
-		<meta charset="utf-8" />
+		<!-- SEO META TAGS -->
+		<meta name="title" content="3DigitStudio - Showcase">
+		<meta name="description" content="Showcase of web-based apartment filtering solutions for property developers.">	
+		<meta name="keywords" content="property,3d,render,developer,showcase,web,webgl,visualisation,realistic">
+		<meta name="robots" content="index, follow">
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta name="language" content="English">
 		<meta name="viewport" content="width=device-width" />
-		<title>Astro</title>
+
+		<!-- GLOBAL STYLESHEET -->
+		<link rel="stylesheet" href="/style/global.css" />
+
+		<title>Showcase - 3DigitStudio</title>
 	</head>
 	<body>
-		<h1>Astro</h1>
+		<Carousel class="image-wrapper" @do={(element, store) =>{
+			store.index = 1; // 1, 17, 38, 50
+			store.speed = 50;
+			store.target = 0;
+			store.limit = 71;
+			store.instigators = [...document.querySelectorAll('.arrow')];
+			store.frameMap = {
+				1: {'forward': 17, 'backwards': 50},
+				17: {'forward': 38, 'backwards': 1},
+				38: {'forward': 50, 'backwards': 17},
+				50: {'forward': 1, 'backwards': 38},
+			}
+			store.UpdateFrame = (backwards) => {
+				if(store.index != store.target){
+					setTimeout(() => {
+						store.instigators.forEach(element => {
+							element.disabled = true;
+						});
+						if(backwards){
+							store.index = (store.index == 1) ? store.limit : store.index - 1;
+						} else {
+							store.index = (store.index == store.limit) ? 1 : store.index + 1;	
+						}				
+						image.src = `/images/carousel/filter_${((store.index < 10) ? '0' + store.index : store.index)}.jpg`;
+						store.UpdateFrame(backwards);
+					}, store.speed);
+				} else {
+					store.instigators.forEach(element => {
+						element.removeAttribute('disabled');
+					});
+				}
+			}
+			window.store = store;
+		}}>
+			<TargetImage id="image" src="images/carousel/filter_01.jpg" />
+			<Arrow class="arrow" @click={(event, store) =>{
+				store.target = store.frameMap[store.index].backwards;
+				store.UpdateFrame(true);
+			}}></Arrow>
+			<Arrow class="arrow right" @click={(event, store) => {
+				store.target = store.frameMap[store.index].forward;
+				store.UpdateFrame(false);
+			}}></Arrow>
+			<div class="target-wrapper">
+				<Target class="target-button" @click={(event, store) => {
+					if(store.target != 1){
+						let back = (store.target > 17) ? false : true;
+						store.target = 1;
+						store.UpdateFrame(back);
+					}
+				}} >1</Target>
+				<Target class="target-button" @click={(event, store) => {
+					if(store.target != 17){
+						// GO TO 17 ===== under 38 go back, if under 17, go front
+						let back = (store.target < 38) ? false : true;
+						store.target = 17;
+						store.UpdateFrame(back);
+					}
+				}} >17</Target>
+				<Target class="target-button" @click={(event, store) => {
+					if(store.target != 38){
+						let back = (store.target < 50) ? false : true;
+						store.target = 38;
+						store.UpdateFrame(back);
+					}
+				}} >38</Target>
+				<Target class="target-button" @click={(event, store) => {
+					if(store.target != 50){
+						let back = (store.target < 17) ? true : false;
+						store.target = 50;
+						store.UpdateFrame(back);
+					}
+				}} >50</Target>
+			</div>
+		</Carousel>
 	</body>
 </html>
+
+<style>
+body{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 100%;
+	height: 100vh;
+}
+.image-wrapper{
+	width: 1280px;
+	height: 720px;
+	background: teal;
+	position: absolute;
+}
+img{
+	position: relative;
+	width: 100%;
+	height: 100%;
+}
+.arrow{
+	position: absolute;
+	left: 15px;
+	width: 50px;
+	height: 50px;
+	background: cadetblue;
+	top: 50%;
+	transform: translateY(-50%);
+	cursor: pointer;
+}
+.right {
+	left: unset;
+	right: 15px;
+}
+.target-wrapper{
+	position: absolute;
+	top: 15px;
+	left: 50%;
+	transform: translateX(-50%);
+	height: 50px;
+	width: 240px;
+	display: flex;
+	justify-content: space-between;
+}
+.target-button{
+	height: 50px;
+	width: 50px;
+}
+</style>

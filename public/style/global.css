@@ -1,0 +1,15 @@
+:root{
+    /* FONT AND CONTENT COLOR */
+    --main-font-color: #fff;
+    --secondary-font-color: #7e7e7e;
+    --orange: #ff1a14;
+    --orange-transparent: #ff1a1433;
+    --dark-background: #1b1b1b;
+    --gray-background: #282828;
+}
+
+body{
+    background: var(--dark-background);
+    margin: 0;
+    padding: 0;
+}

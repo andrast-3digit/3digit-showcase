@@ -24,6 +24,13 @@ const {div: Carousel, button: Arrow, img: TargetImage, button:Target} = XElement
 			store.speed = 50;
 			store.target = 0;
 			store.limit = 71;
+			for(let i = store.index; i <= store.limit; i++){
+				let link = document.createElement('link');
+				link.rel = 'preload';
+				link.as = 'image';
+				link.href = `/images/carousel/filter_${((i < 10) ? '0' + i : i)}.jpg`;
+				document.head.appendChild(link);
+			}
 			store.instigators = [...document.querySelectorAll('.arrow')];
 			store.frameMap = {
 				1: {'forward': 17, 'backwards': 50},

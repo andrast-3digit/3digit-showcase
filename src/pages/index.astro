@@ -24,13 +24,27 @@ const {div: Carousel, button: Arrow, img: TargetImage, button:Target} = XElement
 			store.speed = 50;
 			store.target = 0;
 			store.limit = 71;
+			store.loadedElements = 0;
 			for(let i = store.index; i <= store.limit; i++){
 				let link = document.createElement('link');
 				link.rel = 'preload';
 				link.as = 'image';
 				link.href = `/images/carousel/filter_${((i < 10) ? '0' + i : i)}.jpg`;
+				link.onload = () =>{
+					store.loadedElements++;
+				}
 				document.head.appendChild(link);
 			}
+			store.checkLoading = () =>{
+				if(store.loadedElements < 71){
+					setTimeout(() => {
+						store.checkLoading();
+					}, 50);
+				} else {
+					overlay.style.display = 'none';
+				}
+			}
+			store.checkLoading();
 			store.instigators = [...document.querySelectorAll('.arrow')];
 			store.frameMap = {
 				1: {'forward': 17, 'backwards': 50},
@@ -100,6 +114,7 @@ const {div: Carousel, button: Arrow, img: TargetImage, button:Target} = XElement
 					}
 				}} >50</Target>
 			</div>
+			<XElement @is="div" id="overlay" class="loading-overlay"></XElement>
 		</Carousel>
 	</body>
 </html>
@@ -150,5 +165,14 @@ img{
 .target-button{
 	height: 50px;
 	width: 50px;
+}
+.loading-overlay{
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	z-index: 10;
+	top: 0;
+	left: 0;
+	background: rgba(0,0,0,0.6);
 }
 </style>

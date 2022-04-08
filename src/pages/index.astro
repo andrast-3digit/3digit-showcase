@@ -20,23 +20,31 @@ const {div: Carousel, button: Arrow, img: TargetImage, button:Target} = XElement
 	</head>
 	<body>
 		<Carousel class="image-wrapper" @do={(element, store) =>{
-			store.index = 1; // 1, 17, 38, 50
-			store.speed = 50;
-			store.target = 0;
-			store.limit = 71;
-			store.loadedElements = 0;
-			for(let i = store.index; i <= store.limit; i++){
+			store.carousel = {
+				index: 1,
+				speed: 50,
+				target: 0,
+				limit: 71,
+				loadedElements: 0,
+				frameMap : {
+				1: {'forward': 17, 'backwards': 50},
+				17: {'forward': 38, 'backwards': 1},
+				38: {'forward': 50, 'backwards': 17},
+				50: {'forward': 1, 'backwards': 38}
+				}
+			};
+			for(let i = store.carousel.index; i <= store.carousel.limit; i++){
 				let link = document.createElement('link');
 				link.rel = 'preload';
 				link.as = 'image';
 				link.href = `/images/carousel/filter_${((i < 10) ? '0' + i : i)}.jpg`;
 				link.onload = () =>{
-					store.loadedElements++;
+					store.carousel.loadedElements++;
 				}
 				document.head.appendChild(link);
 			}
 			store.checkLoading = () =>{
-				if(store.loadedElements < 71){
+				if(store.carousel.loadedElements < 71){
 					setTimeout(() => {
 						store.checkLoading();
 					}, 50);
@@ -46,26 +54,20 @@ const {div: Carousel, button: Arrow, img: TargetImage, button:Target} = XElement
 			}
 			store.checkLoading();
 			store.instigators = [...this.querySelectorAll('button')];
-			store.frameMap = {
-				1: {'forward': 17, 'backwards': 50},
-				17: {'forward': 38, 'backwards': 1},
-				38: {'forward': 50, 'backwards': 17},
-				50: {'forward': 1, 'backwards': 38},
-			}
 			store.UpdateFrame = (backwards) => {
-				if(store.index != store.target){
+				if(store.carousel.index != store.carousel.target){
 					setTimeout(() => {
 						store.instigators.forEach(element => {
 							element.disabled = true;
 						});
 						if(backwards){
-							store.index = (store.index == 1) ? store.limit : store.index - 1;
+							store.carousel.index = (store.carousel.index == 1) ? store.carousel.limit : store.carousel.index - 1;
 						} else {
-							store.index = (store.index == store.limit) ? 1 : store.index + 1;	
+							store.carousel.index = (store.carousel.index == store.carousel.limit) ? 1 : store.carousel.index + 1;	
 						}				
-						image.src = `/images/carousel/filter_${((store.index < 10) ? '0' + store.index : store.index)}.jpg`;
+						image.src = `/images/carousel/filter_${((store.carousel.index < 10) ? '0' + store.carousel.index : store.carousel.index)}.jpg`;
 						store.UpdateFrame(backwards);
-					}, store.speed);
+					}, store.carousel.speed);
 				} else {
 					store.instigators.forEach(element => {
 						element.removeAttribute('disabled');
@@ -76,40 +78,40 @@ const {div: Carousel, button: Arrow, img: TargetImage, button:Target} = XElement
 		}}>
 			<TargetImage id="image" src="images/carousel/filter_01.jpg" />
 			<Arrow class="arrow" @click={(event, store) =>{
-				store.target = store.frameMap[store.index].backwards;
+				store.carousel.target = store.carousel.frameMap[store.carousel.index].backwards;
 				store.UpdateFrame(true);
 			}}></Arrow>
 			<Arrow class="arrow right" @click={(event, store) => {
-				store.target = store.frameMap[store.index].forward;
+				store.carousel.target = store.carousel.frameMap[store.carousel.index].forward;
 				store.UpdateFrame(false);
 			}}></Arrow>
 			<div class="target-wrapper">
 				<Target class="target-button" @click={(event, store) => {
-					if(store.target != 1){
-						let back = (store.target > 17) ? false : true;
-						store.target = 1;
+					if(store.carousel.target != 1){
+						let back = (store.carousel.target > 17) ? false : true;
+						store.carousel.target = 1;
 						store.UpdateFrame(back);
 					}
 				}} >1</Target>
 				<Target class="target-button" @click={(event, store) => {
-					if(store.target != 17){
+					if(store.carousel.target != 17){
 						// GO TO 17 ===== under 38 go back, if under 17, go front
-						let back = (store.target < 38) ? false : true;
-						store.target = 17;
+						let back = (store.carousel.target < 38) ? false : true;
+						store.carousel.target = 17;
 						store.UpdateFrame(back);
 					}
 				}} >17</Target>
 				<Target class="target-button" @click={(event, store) => {
-					if(store.target != 38){
-						let back = (store.target < 50) ? false : true;
-						store.target = 38;
+					if(store.carousel.target != 38){
+						let back = (store.carousel.target < 50) ? false : true;
+						store.carousel.target = 38;
 						store.UpdateFrame(back);
 					}
 				}} >38</Target>
 				<Target class="target-button" @click={(event, store) => {
-					if(store.target != 50){
-						let back = (store.target < 17) ? true : false;
-						store.target = 50;
+					if(store.carousel.target != 50){
+						let back = (store.carousel.target < 17) ? true : false;
+						store.carousel.target = 50;
 						store.UpdateFrame(back);
 					}
 				}} >50</Target>

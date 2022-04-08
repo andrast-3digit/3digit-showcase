@@ -53,7 +53,7 @@ const {div: Carousel, button: Arrow, img: TargetImage, button:Target} = XElement
 				}
 			}
 			store.checkLoading();
-			store.instigators = [...this.querySelectorAll('button')];
+			store.instigators = [...document.querySelectorAll('button')];
 			store.UpdateFrame = (backwards) => {
 				if(store.carousel.index != store.carousel.target){
 					setTimeout(() => {
